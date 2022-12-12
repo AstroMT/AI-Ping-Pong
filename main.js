@@ -24,15 +24,20 @@ var ball = {
   dy: 3
 }
 
+var rightWristX = 0;
+var rightWristY = 0;
+var rightWristScore = 0;
+
 function setup() {
   canvas = createCanvas(700, 600);
   canvas.parent("canvas");
 
   video = createCapture(VIDEO);
   video.size(800, 400);
+  video.parent("game_console");
 
-  posenet = ml5.poseNet(video, modelLoaded);
-  posenet.on('pose', gotPoses);
+  poseNet = ml5.poseNet(video, modelLoaded);
+  poseNet.on('pose', gotPoses);
 }
 
 function modelLoaded() {
@@ -42,12 +47,18 @@ function modelLoaded() {
 function gotPoses(results) {
   if (results.length > 0) {
     console.log(results);
-    noseX = results[0].pose.nose.x;
-    noseY = results[0].pose.nose.y;
+    rightWristX = results[0].pose.rightWrist.x;
+    rightWristY = results[0].pose.rightWrist.y;
+    rightWristScore = results[0].pose.rightWrist.confidence;
   }
 }
 
 function draw() {
+  if(rightWristScore > 0.0000000000000000000000000000000000000000000002) {
+    fill("#ff0000");
+    stroke("#ff0000");
+    circle(rightWristX, rightWristY, 50);
+  }
 
   background(0);
 
@@ -87,6 +98,7 @@ function draw() {
 
   //function move call which in very important
   move();
+  
 }
 
 
